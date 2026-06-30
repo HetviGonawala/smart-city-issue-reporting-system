@@ -1,0 +1,61 @@
+@media (max-width: 768px) {
+
+    .hero-section{
+    margin-top:20px;
+    }
+
+
+  .hero-title{
+      font-size:2rem !important;
+    }
+
+  .hero-buttons{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      align-items:center;
+    }
+
+  .hero-buttons button{
+      width:220px;
+      margin:0 !important;
+    }
+
+  .category-grid{
+      grid-template-columns:1fr !important;
+    }
+
+  .navbar-logo {
+    margin-bottom: 10px !important;
+    font-size: 20px !important;
+  }
+
+   .navbar-container {
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 15px !important;
+  }
+
+  .navbar-links {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px !important;
+  }
+
+  .table-container {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;   /* adjust according to your columns */
+  }
+  
+  .footer{
+    text-align:center;
+ }
+
+}

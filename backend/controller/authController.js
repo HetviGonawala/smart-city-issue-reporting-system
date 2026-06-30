@@ -6,21 +6,29 @@ module.exports.signUp = async(req, res) =>{
 
     const newUser = new User({
         username,
-        email,
-        role,
+        email
     });
 
     const registeredUser = await User.register(newUser, password);
 
+    const token = jwt.sign({
+        id: registeredUser._id,
+        username: registeredUser.username,
+        role: registeredUser.role,
+    },
+    process.env.JWT_SECRET,
+    {
+        expiresIn: "7d",
+    });
+
     res.json({
-        message: "User registered successfully"
+        message: "User registered successfully",
+        token
     });
 }
 
 module.exports.login = async(req, res) =>{
-    
-     console.log("login",req.user);
-     console.log("JWT_Token", process.env.JWT_SECRET)
+
     const token = jwt.sign({
         id: req.user._id,
         username: req.user.username,
@@ -29,8 +37,7 @@ module.exports.login = async(req, res) =>{
     process.env.JWT_SECRET,
     {
         expiresIn: "7d",
-    }
-);
+    });
 
     res.json({
         message: "User logged in successfully",

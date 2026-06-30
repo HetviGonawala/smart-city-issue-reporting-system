@@ -1,15 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useFormik } from 'formik';
+import { AuthContext } from "../context/AuthContext";
+import { toast } from "react-toastify";
 
 function Login() {
   const navigate = useNavigate();
 
+  const { login } = useContext(AuthContext);
+
   const validate = values => {
    const errors = {};
    if (!values.username) {
-     errors.username = 'Please Enter Valid Username';
+     errors.username = 'Please Enter Username';
    }
  
    if (!values.password) {
@@ -26,25 +30,21 @@ function Login() {
      },
      validate,
      onSubmit: async(values) => {
-       try{
-      const res = await axios.post("http://localhost:5000/api/auth/login", 
-      {
-        username: values.username,
-        password: values.password,
+      try{
+        const res = await axios.post("http://localhost:5000/api/auth/login", 
+        {
+          username: values.username,
+          password: values.password,
+        }
+        );
+        toast.success(res.data.message)
+        login(res.data.token);
+        navigate("/");
+      } catch (err) {
+        toast.error(err.response.data.message)
       }
-    );
-
-    console.log(res.data);
-    localStorage.setItem("token", res.data.token);
-    navigate("/");
-    
-
-  } catch (err) {
-    console.log(err.response.data || err.message);
-  }
-     },
-   });
-
+    }
+  })
 
   return (
     <div
@@ -119,6 +119,7 @@ function Login() {
             }}
           />
         </div>
+        
         {formik.touched.password && formik.errors.password ? (
         <p style={{ color: "red" }}>{formik.errors.password}</p>
         ) : null}
@@ -139,6 +140,11 @@ function Login() {
         >
           Login
         </button>
+
+        <p style={{ textAlign: "center", marginTop: "15px" }}>
+        Don't have an account?{" "}
+        <Link to="/register">Sign Up</Link>
+        </p>
       </form>
     </div>
   );

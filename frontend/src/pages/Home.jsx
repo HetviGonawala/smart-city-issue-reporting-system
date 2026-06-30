@@ -1,27 +1,52 @@
 import { Link } from "react-router-dom";
+import { useContext} from "react";
+import { AuthContext } from "../context/AuthContext"
+import {
+  FaRoad,
+  FaLightbulb,
+  FaTrash,
+  FaTint,
+  FaTrafficLight,
+  FaTree,
+} from "react-icons/fa";
 
 function Home() {
-  const stats = [
-    { title: "Total Issues", value: 150 },
-    { title: "Pending", value: 45 },
-    { title: "In Progress", value: 35 },
-    { title: "Resolved", value: 70 },
-  ];
 
-  const recentIssues = [
-    {
-      title: "Pothole Near College",
-      status: "Pending",
-    },
-    {
-      title: "Garbage Overflow",
-      status: "Resolved",
-    },
-    {
-      title: "Broken Street Light",
-      status: "In Progress",
-    },
-  ];
+  const { token ,user } = useContext(AuthContext);
+
+  const cards = [
+  {
+    icon: <FaRoad />,
+    title: "Road Damage",
+    value: "Report potholes, damaged roads, cracks, and unsafe road conditions.",
+  },
+  {
+    icon: <FaLightbulb />,
+    title: "Street Lights",
+    value: "Report broken, flickering, or non-functional street lights in your area.",
+  },
+  {
+    icon: <FaTrash />,
+    title: "Garbage Collection",
+    value: "Report overflowing bins, uncollected garbage, and illegal dumping.",
+  },
+  {
+    icon: <FaTint />,
+    title: "Water Supply",
+    value: "Report water leakage, pipeline damage, low water pressure, or supply issues.",
+  },
+  {
+    icon: <FaTrafficLight />,
+    title: "Traffic Signals",
+    value: "Report malfunctioning traffic lights, damaged signs, and road signal issues.",
+  },
+  {
+    icon: <FaTree />,
+    title: "Parks & Public Spaces",
+    value: "Report damaged park equipment, poor maintenance, or cleanliness issues in public spaces.",
+  },
+];
+
 
   return (
     <div
@@ -33,11 +58,12 @@ function Home() {
     >
       {/* Hero Section */}
       <div
+        className="hero-section"
         style={{
           background:
             "linear-gradient(135deg, #2563eb, #06b6d4)",
           color: "white",
-          padding: "60px 30px",
+          padding: "45px 30px",
           borderRadius: "20px",
           textAlign: "center",
           marginBottom: "40px",
@@ -45,6 +71,7 @@ function Home() {
         }}
       >
         <h1
+          className="hero-title"
           style={{
             fontSize: "3rem",
             marginBottom: "15px",
@@ -52,7 +79,7 @@ function Home() {
         >
           Smart City Issue Reporting System
         </h1>
-
+        
         <p
           style={{
             fontSize: "1.2rem",
@@ -61,13 +88,15 @@ function Home() {
             lineHeight: "1.6",
           }}
         >
-          Report civic issues, track complaint status,
-          and help authorities improve your city through
-          a transparent and efficient reporting platform.
+         Report civic issues, upload supporting images, 
+         and track complaint progress with ease.
         </p>
 
-        <div style={{ marginTop: "30px" }}>
-          <Link to="/report-issue">
+        <div 
+          className="hero-buttons" 
+          style={{ marginTop: "30px"}}>
+          {!token && ( 
+          <Link to="/register">
             <button
               style={{
                 padding: "12px 25px",
@@ -80,29 +109,35 @@ function Home() {
                 color: "#2563eb",
                 fontWeight: "bold",
               }}
-            >
-              Report Issue
+            > 
+              Get Started
+              <i className="fa-solid fa-arrow-right" style={{color:"#2563eb", marginLeft:"0.5rem"}}></i>
             </button>
           </Link>
+          )}
 
-          <Link to="/login">
-  <button
-    style={{
-      padding: "12px 25px",
-      borderRadius: "10px",
-      border: "none",
-      cursor: "pointer",
-      fontSize: "16px",
-      marginLeft: "10px",
-      background: "#0f172a",
-      color: "white",
-    }}
-  >
-    Login
-  </button>
-</Link>
+          {user && token && user.role == "user" && (
+          <Link to="/report-issue">
+          <button
+              style={{
+              padding: "12px 25px",
+              borderRadius: "10px",
+              border: "none",
+              cursor: "pointer",
+              fontSize: "16px",
+              marginLeft: "10px",
+              background: "#0f172a",
+              color: "white",
+            }}
+          >
+          Report Issue
+          <i className="fa-solid fa-arrow-right" style={{color:"white", marginLeft:"0.5rem"}}></i>
+          </button>
+          </Link>
+          )}
 
-          <Link to="/myissues">
+        {user && token && user.role == "admin" && (
+        <Link to="/admin/dashboard">
             <button
               style={{
                 padding: "12px 25px",
@@ -110,23 +145,28 @@ function Home() {
                 border: "none",
                 cursor: "pointer",
                 fontSize: "16px",
-                background: "#0f172a",
-                color: "white",
+                background: "white",
+                color: "#2563eb",
                 marginLeft:"1rem"
               }}
             >
-              View Issues
+              Go To DashBoard
+              <i className="fa-solid fa-arrow-right" style={{color:"#2563eb", marginLeft:"0.5rem"}}></i>
             </button>
           </Link>
+          )}
         </div>
       </div>
 
       {/* Statistics */}
-      <h2 style={{ marginBottom: "20px" }}>
-        City Statistics
+      <h2 
+        className="section-title"
+        style={{ marginBottom: "20px" }}>
+        Popular Complaint Categories
       </h2>
 
       <div
+        className="category-grid"
         style={{
           display: "grid",
           gridTemplateColumns:
@@ -135,70 +175,46 @@ function Home() {
           marginBottom: "50px",
         }}
       >
-        {stats.map((item) => (
+        {cards.map((card) => (
           <div
-            key={item.title}
+            key={card.title}
             style={{
               background: "white",
               borderRadius: "20px",
-              padding: "25px",
+              padding: "20px",
+              minHeight: "220px",
               textAlign: "center",
               boxShadow: "0 5px 15px rgba(0,0,0,0.08)",
             }}
           >
-            <h1
+            <div
               style={{
+                fontSize: "40px",
                 color: "#2563eb",
+                marginBottom: "15px",
+              }}
+            >
+              {card.icon}
+            </div>
+
+            <h2
+              className="card-title"
+              style={{
+                color: "black",
                 marginBottom: "10px",
               }}
             >
-              {item.value}
-            </h1>
+              {card.title}
+            </h2>
 
-            <p>{item.title}</p>
+            <p style={{lineHeight: "1.6"}}><i>{card.value}</i></p>
           </div>
         ))}
       </div>
 
-      {/* Recent Complaints */}
-      <h2 style={{ marginBottom: "20px" }}>
-        Recent Complaints
-      </h2>
-
-      {recentIssues.map((issue) => (
-        <div
-          key={issue.title}
-          style={{
-            background: "white",
-            padding: "20px",
-            borderRadius: "15px",
-            marginBottom: "15px",
-            boxShadow: "0 5px 15px rgba(0,0,0,0.08)",
-          }}
-        >
-          <h3>{issue.title}</h3>
-
-          <p>
-            Status:{" "}
-            <span
-              style={{
-                fontWeight: "bold",
-                color:
-                  issue.status === "Resolved"
-                    ? "green"
-                    : issue.status === "Pending"
-                    ? "red"
-                    : "blue",
-              }}
-            >
-              {issue.status}
-            </span>
-          </p>
-        </div>
-      ))}
-
       {/* Features */}
       <h2
+        className="section-title"
         style={{
           marginTop: "50px",
           marginBottom: "20px",
@@ -223,25 +239,13 @@ function Home() {
             boxShadow: "0 5px 15px rgba(0,0,0,0.08)",
           }}
         >
-          <h3>📍 Location Based Reporting</h3>
+          <h3 className="card-title" style={{marginBottom:"0.5rem"}}><i className="fa-solid fa-camera"
+                 style={{ color: "#2563eb" , marginRight:"0.75rem"}}>
+              </i> 
+              Image Upload
+          </h3>
 
-          <p>
-            Report issues with exact location
-            information.
-          </p>
-        </div>
-
-        <div
-          style={{
-            background: "white",
-            padding: "25px",
-            borderRadius: "15px",
-            boxShadow: "0 5px 15px rgba(0,0,0,0.08)",
-          }}
-        >
-          <h3>📷 Image Upload</h3>
-
-          <p>
+          <p style={{lineHeight: "1.4"}}>
             Upload images to provide proof and
             improve issue verification.
           </p>
@@ -255,13 +259,37 @@ function Home() {
             boxShadow: "0 5px 15px rgba(0,0,0,0.08)",
           }}
         >
-          <h3>📊 Live Status Tracking</h3>
+          <h3  className="card-title" style={{marginBottom:"0.5rem"}}><i className="fa-solid fa-chart-simple" 
+                  style={{color:"#2563eb", marginRight:"0.75rem"}}>
+              </i>
+              Live Status Tracking
+          </h3>
 
-          <p>
+          <p style={{lineHeight: "1.4"}}>
             Track complaint progress from submission
             to resolution.
           </p>
         </div>
+
+        <div
+          style={{
+            background: "white",
+            padding: "25px",
+            borderRadius: "15px",
+            boxShadow: "0 5px 15px rgba(0,0,0,0.08)",
+          }}
+        >
+          <h3 className="card-title" style={{marginBottom:"0.5rem"}}><i className="fa-solid fa-lock" 
+              style={{color:" #2563eb", marginRight:"0.75rem"}}>
+            </i>
+            Secure & Private
+          </h3>
+
+          <p style={{lineHeight: "1.4"}}>
+            Users can access only their own complaints, ensuring privacy and security.
+          </p>
+        </div>
+
       </div>
     </div>
   );

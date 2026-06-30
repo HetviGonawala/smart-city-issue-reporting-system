@@ -1,22 +1,21 @@
 function Footer() {
   return (
-    <footer
+    <footer className="footer"
       style={{
         background: "#1e293b",
         color: "white",
         textAlign: "center",
         padding: "20px",
-        // marginTop: "40px",
       }}
     >
-      <h3>🏙 Smart City Reporter</h3>
+      <h3 style={{ color: "white"}}><i class="fa-solid fa-city" style={{marginRight:"0.75rem"}}></i>Smart City Reporter</h3>
 
       <p style={{ marginTop: "10px" }}>
-        Helping citizens report civic issues efficiently.
+        Building cleaner, safer, and smarter communities together.
       </p>
 
       <p style={{ marginTop: "10px" }}>
-        © 2026 Smart City Issue Reporting System
+        &copy; 2026 Smart City Issue Reporting System
       </p>
     </footer>
   );

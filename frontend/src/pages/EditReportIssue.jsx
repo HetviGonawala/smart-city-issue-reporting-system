@@ -1,20 +1,20 @@
-import react, { useState, useEffect} from "react";
+import react, { useState, useEffect, useContext} from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useFormik } from 'formik';
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext"
+import { toast } from "react-toastify";
 
 
 function EditReportIssue() {
-    const { id } = useParams();
+  const { id } = useParams();
 
   const [image, setImage] = useState(null);
   const navigate = useNavigate();
+  const { token } = useContext(AuthContext)
 
-  const token = localStorage.getItem("token");
-  console.log("edit", token);
-
-    const validate = values => {
+  const validate = values => {
    const errors = {};
    if (!values.title) {
      errors.title = 'Title is Required';
@@ -47,42 +47,37 @@ function EditReportIssue() {
      validate,
      onSubmit: async (values) => {
 
-  const formData = new FormData();
+      const formData = new FormData();
 
-  formData.append("title", values.title);
-  formData.append("category", values.category);
-  formData.append("description", values.description);
-  formData.append("location", values.location);
+      formData.append("title", values.title);
+      formData.append("category", values.category);
+      formData.append("description", values.description);
+      formData.append("location", values.location);
 
-  if(image){
-    formData.append("image", image);
-  }
-
-  try{
-
-    const res = await axios.put(`http://localhost:5000/api/issues/${id}`,
-      formData,
-      {
-        headers:{
-          Authorization:`Bearer ${token}`,
-          "Content-Type":"multipart/form-data"
-        }
+      if(image){
+        formData.append("image", image);
       }
-    );
 
-    alert(res.data.message);
-    navigate(`/issues/${id}`);
-
-  }
-  catch(err){
-        console.log(err);
-  }
-
-},
-});
+      try{
+        const res = await axios.put(`http://localhost:5000/api/issues/${id}`,
+        formData,
+        {
+          headers:{
+            Authorization:`Bearer ${token}`,
+            "Content-Type":"multipart/form-data"
+          }
+        }
+      );
+      toast.success(res.data.message);
+      navigate(`/issues/${id}`);
+      }
+      catch(err){
+        toast.error(err.response.data.message);
+      }
+    },
+  });
 
   const fetchComplaint = async()=>{
-    console.log("edit issue route");
     try{
       const res = await axios.get(`http://localhost:5000/api/issues/${id}`,
         {
@@ -91,7 +86,7 @@ function EditReportIssue() {
           }
         }
       );
-      console.log(res.data);
+
       formik.setValues({
           title: res.data.title,
           category: res.data.category,
@@ -99,7 +94,7 @@ function EditReportIssue() {
           location: res.data.location,
       });
     } catch(err){
-      console.log(err);
+      toast.error(err.response.data.message);
     }
   }
  
@@ -107,8 +102,8 @@ function EditReportIssue() {
     fetchComplaint();
   },[id]);
 
-    return(
-        <div
+  return(
+    <div
       style={{
         maxWidth: "700px",
         margin: "60px auto",
@@ -149,6 +144,7 @@ function EditReportIssue() {
             border: "1px solid #ccc",
           }}
         />
+
         {formik.touched.title && formik.errors.title ? (
         <p style={{ color: "red" }}>{formik.errors.title}</p>
         ) : null}
@@ -165,17 +161,17 @@ function EditReportIssue() {
           }}
         >
           <option value="">Select Category</option>
-          <option>Pothole</option>
-          <option>Garbage</option>
-          <option>Water Leakage</option>
-          <option>Street Light</option>
           <option>Road Damage</option>
+          <option>Street Light</option>
+          <option>Garbage Collection</option>
+          <option>Water Supply</option>
+          <option>Traffic Signals</option>
+          <option>Parks & Public Spaces</option>
         </select>
         
         {formik.touched.category && formik.errors.category ? (
         <p style={{ color: "red" }}>{formik.errors.category}</p>
         ) : null}
-
 
         <textarea
           name="description"
@@ -194,7 +190,6 @@ function EditReportIssue() {
         {formik.touched.description && formik.errors.description ? (
         <p style={{ color: "red" }}>{formik.errors.description}</p>
         ) : null}
-
 
         <input
           type="text"
@@ -246,7 +241,6 @@ function EditReportIssue() {
         >
           Edit Issue
         </button>
-        
       </form>
     </div>
     )

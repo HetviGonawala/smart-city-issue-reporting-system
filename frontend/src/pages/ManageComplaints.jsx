@@ -1,73 +1,53 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import axios from "axios";
+import { AuthContext } from "../context/AuthContext";
 import ComplaintTable from "../components/ComplaintTable";
+import { toast } from "react-toastify";
 
 function ManageComplaints() {
 
-   const [complaints, setComplaints] = useState([]);
+  const [complaints, setComplaints] = useState([]);
+  const { token } = useContext(AuthContext);
   
-    const token = localStorage.getItem("token");
-  
-    const fetchComplaints = async () => {
+  const fetchComplaints = async () => {
     try {
       const res = await axios.get("http://localhost:5000/api/admin/complaints",
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    }
-    );
-    setComplaints(res.data);
-    console.log(res.data);
-  
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+      );
+      setComplaints(res.data);
     } catch (err) {
-      console.log(err);
+      toast.error(err.response.data.message);
     }
   };
   
-    useEffect(()=>{
-      fetchComplaints()
-    },[])
-
-  // const complaints = [
-  //   {
-  //     id: 1,
-  //     user: "Harsh",
-  //     category: "Road",
-  //     status: "Pending",
-  //   },
-  //   {
-  //     id: 2,
-  //     user: "Rahul",
-  //     category: "Cleanliness",
-  //     status: "Resolved",
-  //   },
-  //   {
-  //     id: 3,
-  //     user: "Priya",
-  //     category: "Electricity",
-  //     status: "In Progress",
-  //   },
-  // ];
+  useEffect(()=>{
+    fetchComplaints()
+  },[])
 
   return (
     <div
-  style={{
-    maxWidth: "1000px",
-    margin: "0 auto",
-    padding: "20px",
-  }}
-  >
+      style={{
+        maxWidth: "1000px",
+        margin: "0 auto",
+        padding: "20px",
+      }}
+    >
       <h1 style={{marginBottom:"0.75rem"}}>Manage Complaints</h1>
 
-      <p>
+      <p style={{marginBottom:"1rem"}}>
         View and manage all complaints submitted by users.
       </p>
-      <br />
+    
+      <div className="table-container">
       <ComplaintTable 
           complaints={complaints}
           setComplaints={setComplaints}
       />
+      </div>
     </div>
   );
 }

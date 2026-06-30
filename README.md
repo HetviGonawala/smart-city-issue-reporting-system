@@ -51,7 +51,7 @@ A full-stack web application that enables citizens to report civic issues such a
 
 -comming soon
 
-## 📂 Project Structure
+## Project Structure
 
 ```
 Smart-City-Issue-Reporting-System
@@ -76,7 +76,7 @@ Smart-City-Issue-Reporting-System
 
 ---
 
-## ⚙️ Installation
+## Installation
 
 ### Clone the repository
 
@@ -121,7 +121,7 @@ npm run dev
 
 ---
 
-## 🔐 Authentication
+## Authentication
 
 - JWT-based authentication
 - Protected routes
@@ -129,13 +129,13 @@ npm run dev
 
 ---
 
-## ☁️ Image Upload
+## Image Upload
 
 Images are uploaded securely using **Cloudinary** and stored with each complaint.
 
 ---
 
-## 🗄️ Database
+## Database
 
 MongoDB Atlas is used to store:
 
@@ -144,7 +144,7 @@ MongoDB Atlas is used to store:
 
 ---
 
-## 🌟 Future Enhancements
+## Future Enhancements
 
 - Email notifications
 - Google Maps integration
@@ -157,7 +157,7 @@ MongoDB Atlas is used to store:
 
 ---
 
-## 👩‍💻 Author
+## Author
 
 **Hetvi Gonawala**
 

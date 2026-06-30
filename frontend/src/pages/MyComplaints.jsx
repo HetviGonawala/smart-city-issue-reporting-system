@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import ComplaintCard from "../components/ComplaintCard";
+import { AuthContext } from "../context/AuthContext";
+import { toast } from "react-toastify";
 
 function MyComplaints() {
   const [issues, setIssues] = useState([]);
+
+  const { token } = useContext(AuthContext);
   
   const fetchIssues = async () => {
-
-    const token = localStorage.getItem("token");
-
     try {
       const res = await axios.get("http://localhost:5000/api/users/mycomplaints",
         {
@@ -17,10 +18,9 @@ function MyComplaints() {
           }
         }
       );
-      console.log(res.data);
       setIssues(res.data);
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      toast.error(err.response.data.message);
     }
   };
 
@@ -28,10 +28,19 @@ function MyComplaints() {
     fetchIssues();
   }, []);
 
-
   return (
-    <div>
-      <h1 style={{margin: "1rem",}}>My Issues</h1>
+    <>
+    <h1 style={{margin: "1rem",}}>My Issues</h1>
+    <div 
+      style={{
+        display: "grid",
+        gridTemplateColumns:
+          "repeat(auto-fit, minmax(280px, 350px))",
+        gap: "20px",
+        marginBottom: "50px",
+        marginLeft: "1rem"
+      }}
+    >
 
       {issues.map((issue) => (
         <ComplaintCard
@@ -43,6 +52,7 @@ function MyComplaints() {
         />
       ))}
     </div>
+    </>
   );
 }
 

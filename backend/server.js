@@ -22,7 +22,6 @@ const authRouter = require("./routes/authRoutes.js");
 const issueRouter = require("./routes/issueRoutes.js");
 const userRouter = require("./routes/userRoutes.js");
 
-// const MONGO_URL = "mongodb://127.0.0.1:27017/smartcityDB";
 const dbUrl = process.env.ATLASDB_URL;
 
 async function main() {
@@ -59,10 +58,19 @@ app.use((req, res, next) =>{
 
 //error Handler Middleware
 
-app.use((err, req, res, next) =>{
-    const { statusCode  = 500, message = "Somthing went wrong"} = err;
-    res.status(statusCode).send(message);
-})
+app.use((err, req, res, next) => {
+    let { statusCode = 500, message = "Something went wrong" } = err;
+
+    if (err.name === "UserExistsError") {
+        statusCode = 400;
+        message = "You have already signed up. Please log in.";
+    }
+
+    res.status(statusCode).json({
+        success: false,
+        message,
+    });
+});
 
 app.listen(5000,() => {
     console.log("server is listening on 5000");

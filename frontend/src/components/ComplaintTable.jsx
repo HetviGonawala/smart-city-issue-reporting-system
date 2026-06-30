@@ -1,39 +1,43 @@
-import React,{useState} from "react";
+import React,{useState, useContext} from "react";
 import axios from "axios";
-
-const token = localStorage.getItem("token");
+import { AuthContext } from "../context/AuthContext";
+import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 function ComplaintTable({ complaints, setComplaints }) {
 
   const [status, setStatus] = useState({});
+  const { token } = useContext(AuthContext);
 
   const updateComplaint = async(id)=>{
-    console.log("updated route");
-
     try{
         const res = await axios.put(`http://localhost:5000/api/admin/complaints/${id}/status`,{
          status: status[id],
     },
-  {
+    {
         headers: {
             Authorization: `Bearer ${token}`,
         },
     })
-    alert(res.data.message);
+    toast.success(res.data.message);
 
     setComplaints((prev) =>
         prev.map((c) =>
             c._id === id ? res.data.complaint : c
         )
     );
-    console.log("compalint",res.data.complaint);
     } catch(err){
-      consoel.log(err);
+      toast.error(err.response.data.message);
     }
   }
 
   const deleteComplaint = async(id) =>{
-    console.log("delete route");
+    const confirmDelete = window.confirm(
+                "Are you sure you want to delete this complaint?"
+    );
+
+  if (!confirmDelete) return;
+
       try{
         const res = await axios.delete(`http://localhost:5000/api/admin/complaint/${id}`,
           {
@@ -42,9 +46,9 @@ function ComplaintTable({ complaints, setComplaints }) {
             }
           }
         )
-        alert(res.data.message);
+        toast.success(res.data.message);
       } catch(err){
-        console.log(err);
+        toast.error(er.response.data.message);
       }
       setComplaints((prev) =>
           prev.filter((c) => c._id !== id)
@@ -52,65 +56,73 @@ function ComplaintTable({ complaints, setComplaints }) {
   }
 
   return (
-    <table
+    <table 
       style={{
-  width: "100%",
-  borderCollapse: "collapse",
-  marginTop: "5rem"
-  }}
-      cellPadding="10"
-      style={{
-        width: "100%",
-        borderCollapse: "collapse",
-      }}
+          width: "100%",
+          borderCollapse: "collapse",
+          marginTop: "5rem",
+          marginBottom: "5rem",
+        }}
+        cellPadding="10"
+        style={{
+          width: "100%",
+          borderCollapse: "collapse",
+          }}
     >
-      <thead>
-  <tr>
-    <th style={{ backgroundColor: "#f5f5f5", padding: "10px" ,color:"black"}}>
-      User Name
-    </th>
+    <thead>
+    <tr>
+      <th style={{ backgroundColor: "#f5f5f5", padding: "10px" ,color:"black"}}>
+        User Name
+      </th>
 
-    <th style={{ backgroundColor: "#f5f5f5", padding: "10px",color:"black"}}>
-      Location
-    </th>
+      <th style={{ backgroundColor: "#f5f5f5", padding: "10px",color:"black"}}>
+        Location
+      </th>
 
-    <th style={{ backgroundColor: "#f5f5f5", padding: "10px",color:"black" }}>
-      Category
-    </th>
+      <th style={{ backgroundColor: "#f5f5f5", padding: "10px",color:"black" }}>
+        Category
+      </th>
 
-    <th style={{ backgroundColor: "#f5f5f5", padding: "10px" ,color:"black"}}>
-      Status
-    </th>
+      <th style={{ backgroundColor: "#f5f5f5", padding: "10px" ,color:"black"}}>
+        Status
+      </th>
 
-    <th style={{ backgroundColor: "#f5f5f5", padding: "10px",color:"black" }}>
-      Action
-    </th>
-    <th style={{ backgroundColor: "#f5f5f5", padding: "10px",color:"black" }}>
-      Edit/Delete
-    </th>
-  </tr>
-  </thead>
-      <tbody>
+      <th style={{ backgroundColor: "#f5f5f5", padding: "10px",color:"black" }}>
+        Action
+      </th>
+
+      <th style={{ backgroundColor: "#f5f5f5", padding: "10px",color:"black" }}>
+        View Details
+      </th>
+
+      <th style={{ backgroundColor: "#f5f5f5", padding: "10px",color:"black" }}>
+        Edit/Delete
+      </th>
+    </tr>
+    </thead>
+
+    <tbody>
         {complaints.map((complaint) => (
           <tr key={complaint._id}>
             <td>{complaint.createdBy.username}</td>
             <td>{complaint.location}</td>
             <td>{complaint.category}</td>
             <td>
-  <span
-    style={{
-      color:
-        complaint.status === "Resolved"
-          ? "green"
-          : complaint.status === "Pending"
-          ? "red"
-          : "blue",
-      fontWeight: "bold",
-    }}
-  >
-    {complaint.status}
-  </span>
-  </td>
+              <span
+                style={{
+                  color:
+                  complaint.status === "Resolved"
+                  ? "green"
+                  : complaint.status === "Pending"
+                  ? "red"
+                  : "blue",
+                  fontWeight: "bold",
+                }}
+              >
+                {complaint.status}
+              </span>
+            </td>
+
             <td>
               <select value={status[complaint._id] || complaint.status}
                   onChange={(e) =>
@@ -124,40 +136,63 @@ function ComplaintTable({ complaints, setComplaints }) {
                 <option>Resolved</option>
               </select>
             </td>
+
+            <td>
+              <Link to={`/issues/${complaint._id}`}>
+              <button
+                style={{
+                  padding: "6px 12px",
+                  width: "100%",
+                  borderRadius: "10px",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: "1rem",
+                  marginRight: "10px",
+                  background: "black",
+                  color: "white",
+                  fontWeight: "bold",
+                  marginBottom:"1rem",
+                }}
+              
+              >View</button>
+              </Link>
+            </td>
+
             <td>
               <button 
-              onClick={() => updateComplaint(complaint._id)}
-              style={{
-                padding: "6px 12px",
-                width: "100%",
-                borderRadius: "10px",
-                border: "none",
-                cursor: "pointer",
-                fontSize: "1rem",
-                marginRight: "10px",
-                background: "black",
-                color: "white",
-                fontWeight: "bold",
-                marginBottom:"1rem",
-              }}>
-              Edit
-            </button> <br />
-            <button 
-            onClick={()=> deleteComplaint(complaint._id)}
-            style={{
-                padding: "6px 12px",
-                width: "100%",
-                borderRadius: "10px",
-                border: "none",
-                cursor: "pointer",
-                fontSize: "1rem",
-                marginRight: "10px",
-                background: "black",
-                color: "white",
-                fontWeight: "bold",
-              }}>
-              Delete
-            </button>
+                onClick={() => updateComplaint(complaint._id)}
+                style={{
+                  padding: "6px 12px",
+                  width: "100%",
+                  borderRadius: "10px",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: "1rem",
+                  marginRight: "10px",
+                  background: "black",
+                  color: "white",
+                  fontWeight: "bold",
+                  marginBottom:"1rem",
+                }}>
+                  Edit
+              </button> <br />
+                
+              <button 
+                onClick={()=> deleteComplaint(complaint._id)}
+                style={{
+                  padding: "6px 12px",
+                  width: "100%",
+                  borderRadius: "10px",
+                  border: "none",
+                  cursor: "pointer",
+                  fontSize: "1rem",
+                  marginRight: "10px",
+                  background: "black",
+                  color: "white",
+                  fontWeight: "bold",
+                }}>
+                  Delete
+              </button>
             </td>
           </tr>
         ))}

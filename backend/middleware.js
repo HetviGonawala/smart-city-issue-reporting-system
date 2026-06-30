@@ -2,8 +2,6 @@ const jwt = require("jsonwebtoken");
 const Issue = require("./models/issue");
 
 module.exports.verifyToken = (req, res, next)=> {
-    console.log("Middleware executed");
-    console.log(req.headers.authorization);
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
@@ -22,7 +20,6 @@ module.exports.verifyToken = (req, res, next)=> {
         );
 
         req.user = decoded;
-        console.log(req.user);
 
         next();
 
@@ -44,7 +41,7 @@ module.exports.isIssueOwner = async (req, res, next) =>{
         });
     }
 
-    if(issue.createdBy.toString() !== req.user.id){
+    if(issue.createdBy.toString() !== req.user.id && req.user.role !== "admin"){
         return res.status(403).json({
             message: "You are not the owner of this issue"
         })
@@ -53,14 +50,10 @@ module.exports.isIssueOwner = async (req, res, next) =>{
 }
 
 module.exports.isAdmin = (req, res, next) =>{
-    console.log("Role from token:", req.user.role);
-    console.log("isAdmin route");
     if( req.user.role !== "admin"){
         return res.status(403).json({
             message: "You are not admin"
         })
     }
-    console.log("before next");
     next();
-    console.log("after next");
 }

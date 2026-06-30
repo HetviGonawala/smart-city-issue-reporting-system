@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Layout from "./components/Layout";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
+import Layout from "./components/Layout";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -10,9 +12,10 @@ import ComplaintDetails from "./pages/ComplaintDetails";
 import EditReportIssue from "./pages/EditReportIssue"
 import AdminDashboard from "./pages/AdminDashboard";
 import ManageComplaints from "./pages/ManageComplaints";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import ProtectedRoute from "./components/ProtectedRoute";
+// import Navbar from "./components/Navbar";
+// import Footer from "./components/Footer";
+// import ProtectedRoute from "./components/ProtectedRoute";
+
 function App() {
   return (
     <BrowserRouter>
@@ -28,21 +31,26 @@ function App() {
           <Route
             path="/admin/dashboard"
             element={
-              <ProtectedRoute>
               <AdminDashboard />
-              </ProtectedRoute>
             }
           />
           <Route
             path="/manage-issues"
             element={
-              <ProtectedRoute>
               <ManageComplaints />
-              </ProtectedRoute>
             }
           />
         </Route>
       </Routes>
+      <ToastContainer 
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme="colored" />
     </BrowserRouter>
   );
 }

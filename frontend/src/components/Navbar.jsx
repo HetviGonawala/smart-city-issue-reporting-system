@@ -1,8 +1,22 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import { toast } from "react-toastify";
 
 function Navbar() {
+
+  const navigate = useNavigate();
+
+  const { token, logout, user } = useContext(AuthContext);
+
+  const handleLogout = () =>{
+    logout();
+    toast.success("You are Logged Out Successfully");
+    navigate("/");
+  }
+  
   return (
-    <nav
+    <nav className="navbar-container"
       style={{
         background: "linear-gradient(135deg, #1e3a8a, #2563eb)",
         padding: "15px 40px",
@@ -17,17 +31,19 @@ function Navbar() {
     >
       {/* Logo */}
       <h2
+        className="navbar-logo"
         style={{
           color: "white",
           margin: 0,
           fontSize: "24px",
         }}
       >
-        🏙 Smart City Reporter
+        <i className="fa-solid fa-city" style={{marginRight:"0.75rem"}}></i>Smart City Reporter
       </h2>
 
       {/* Links */}
       <div
+        className="navbar-links"
         style={{
           display: "flex",
           gap: "20px",
@@ -45,6 +61,20 @@ function Navbar() {
           Home
         </Link>
 
+        {!token && (
+        <>
+        <Link
+          to="/register"
+          style={{
+            color: "white",
+            textDecoration: "none",
+            fontWeight: "bold",
+          }}
+        >
+          SignUp
+        </Link>
+      
+
         <Link
           to="/login"
           style={{
@@ -55,18 +85,11 @@ function Navbar() {
         >
           Login
         </Link>
-
-        <Link
-          to="/register"
-          style={{
-            color: "white",
-            textDecoration: "none",
-            fontWeight: "bold",
-          }}
-        >
-          Register
-        </Link>
-
+        </>
+        )}
+        
+        {user && token && user.role == "user" && (
+        <>
         <Link
           to="/report-issue"
           style={{
@@ -88,7 +111,11 @@ function Navbar() {
         >
           My Issues
         </Link>
+        </>
+        )}
 
+        {user && token && user.role == "admin" && (
+        <>
         <Link
           to="/admin/dashboard"
           style={{
@@ -110,6 +137,24 @@ function Navbar() {
         >
           Manage Issues
         </Link>
+        </>
+        )}
+
+        {token && (
+        <button
+          onClick = {handleLogout}
+          style={{
+            background: "transparent",
+            border: "none",
+            color: "white",
+            fontWeight: "bold",
+            cursor: "pointer",
+            fontSize: "16px",
+            textDecoration: "none",
+          }}>
+          LogOut
+        </button>
+        )}
       </div>
     </nav>
   );

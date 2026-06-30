@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import { useFormik } from 'formik';
 import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from "../context/AuthContext";
+import { toast } from "react-toastify";
 
 function ReportIssue() {
+
+  const { token } = useContext(AuthContext);
 
   const validate = values => {
    const errors = {};
@@ -25,10 +29,9 @@ function ReportIssue() {
  
    return errors;
  };
+
  const [image, setImage] = useState(null);
  const navigate = useNavigate();
-
-  const token = localStorage.getItem("token");
 
   const formik = useFormik({
      initialValues: {
@@ -40,40 +43,34 @@ function ReportIssue() {
      validate,
      onSubmit: async (values) => {
 
-  const formData = new FormData();
+      const formData = new FormData();
 
-  formData.append("title", values.title);
-  formData.append("category", values.category);
-  formData.append("description", values.description);
-  formData.append("location", values.location);
+      formData.append("title", values.title);
+      formData.append("category", values.category);
+      formData.append("description", values.description);
+      formData.append("location", values.location);
 
-  if(image){
-    formData.append("image", image);
-  }
-
-  try{
-
-    const res = await axios.post("http://localhost:5000/api/issues",
-      formData,
-      {
-        headers:{
-          Authorization:`Bearer ${token}`,
-          "Content-Type":"multipart/form-data"
-        }
+      if(image){
+        formData.append("image", image);
       }
-    );
 
-    alert(res.data.message);
-    navigate("/");
-
-
-  }
-  catch(err){
-        console.log(err);
-  }
-
-},
-});
+      try{
+        const res = await axios.post("http://localhost:5000/api/issues",
+        formData,
+        {
+          headers:{
+            Authorization:`Bearer ${token}`,
+            "Content-Type":"multipart/form-data"
+          }
+        }
+      );
+      toast.success(res.data.message);
+      navigate("/myissues");
+      } catch(err){
+      toast.error(err.response.data.message);
+      }
+    },
+  });
 
   return (
     <div
@@ -117,6 +114,7 @@ function ReportIssue() {
             border: "1px solid #ccc",
           }}
         />
+
         {formik.touched.title && formik.errors.title ? (
         <p style={{ color: "red" }}>{formik.errors.title}</p>
         ) : null}
@@ -133,12 +131,14 @@ function ReportIssue() {
           }}
         >
           <option value="">Select Category</option>
-          <option>Pothole</option>
-          <option>Garbage</option>
-          <option>Water Leakage</option>
-          <option>Street Light</option>
           <option>Road Damage</option>
+          <option>Street Light</option>
+          <option>Garbage Collection</option>
+          <option>Water Supply</option>
+          <option>Traffic Signals</option>
+          <option>Parks & Public Spaces</option>
         </select>
+
         {formik.touched.category && formik.errors.category ? (
         <p style={{ color: "red" }}>{formik.errors.category}</p>
         ) : null}
@@ -156,6 +156,7 @@ function ReportIssue() {
             border: "1px solid #ccc",
           }}
         />
+
         {formik.touched.description && formik.errors.description ? (
         <p style={{ color: "red" }}>{formik.errors.description}</p>
         ) : null}
@@ -173,6 +174,7 @@ function ReportIssue() {
             border: "1px solid #ccc",
           }}
         />
+        
         {formik.touched.location && formik.errors.location ? (
         <p style={{ color: "red" }}>{formik.errors.location}</p>
         ) : null}
@@ -193,6 +195,7 @@ function ReportIssue() {
             marginBottom: "1rem",
           }}
         />
+        
         <button
           type="submit"
           style={{

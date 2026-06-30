@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext} from "react";
 import axios from "axios";
 import StatsCard from "../components/StatsCard";
+import { AuthContext } from "../context/AuthContext";
 
 function AdminDashboard() {
 
   const [records, setRecords] = useState({});
+  const { token } = useContext(AuthContext);
 
   const fetchRecords = async()=>{
-      const token = localStorage.getItem("token");
+
       try{
         const res = await axios.get("http://localhost:5000/api/admin/dashboard",
           {
@@ -16,12 +18,10 @@ function AdminDashboard() {
             }
           }
         );
-        console.log(res.data);
         setRecords(res.data);
       } catch(err) {
-        console.log(err);
+        toast.error(err.response.data.message);
       }
-
   }
 
   useEffect(()=>{
@@ -30,21 +30,21 @@ function AdminDashboard() {
 
   return (
     <div
-  style={{
-    maxWidth: "1000px",
-    margin: "0 auto",
-    padding: "20px",
-  }}
-  >
-      <h1>Admin Dashboard</h1>
-      <p>
-  Monitor complaint statistics and track issue resolution.
-  </p>
+      style={{
+        maxWidth: "1000px",
+        margin: "0 auto",
+        padding: "20px",
+      }}
+    >
+      <h1 style={{marginBottom: "0.75rem"}}>Admin Dashboard</h1>
+
+      <p>Monitor complaint statistics and track issue resolution.</p>
 
       <div
         style={{
           display: "flex",
           flexWrap: "wrap",
+          marginTop:"1rem"
         }}
       >
         <StatsCard

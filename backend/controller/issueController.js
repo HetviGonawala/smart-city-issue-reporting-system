@@ -1,7 +1,6 @@
 const Issue = require("../models/issue");
 
 module.exports.createIssue = async(req, res) =>{
-    console.log("create",req.user);
     const issue = new Issue(req.body);
     issue.createdBy = req.user.id;
 
@@ -20,15 +19,12 @@ module.exports.createIssue = async(req, res) =>{
 
 module.exports.showIssue = async(req,res) =>{
     const { id } = req.params;
-    const issue = await Issue.findById(id);
+    const issue = await Issue.findById(id).populate("createdBy");
     res.json(issue);
 }
 
 module.exports.updateIssue = async(req, res) =>{
     const { id } = req.params;
-
-    console.log(req.body);
-    console.log(req.file);
     const issue = await Issue.findByIdAndUpdate(id, {...req.body},{new:true});
 
     //for edit image

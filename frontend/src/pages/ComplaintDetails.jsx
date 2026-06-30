@@ -1,18 +1,17 @@
-import React, { useState, useEffect} from "react";
+import React, { useState, useEffect, useContext} from "react";
 import axios from "axios";
 import { useParams, Link, useNavigate } from "react-router-dom";
-
+import { AuthContext } from "../context/AuthContext"
+import { toast } from "react-toastify";
 
 function ComplaintDetails() {
   const { id } = useParams();
+  const { token, user } = useContext(AuthContext);
 
   const [complaint,setComplaint] = useState(null);
   const navigate = useNavigate();
 
-  const token = localStorage.getItem("token");
-
   const fetchComplaint = async()=>{
-    console.log("unique issue route");
     try{
       const res = await axios.get(`http://localhost:5000/api/issues/${id}`,
         {
@@ -21,10 +20,9 @@ function ComplaintDetails() {
           }
         }
       );
-      console.log(res.data);
       setComplaint(res.data);
     } catch(err){
-      console.log(err);
+      toast.error(err.response.data.message);
     }
   }
 
@@ -37,7 +35,12 @@ function ComplaintDetails() {
   }
 
   const deleteComplaint = async(id) =>{
-    console.log("delete route");
+
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this complaint?"
+    )
+    if(!confirmDelete) return;
+    
     try{
       const res = await axios.delete(`http://localhost:5000/api/issues/${id}`,
         {
@@ -46,54 +49,54 @@ function ComplaintDetails() {
           }
         }
       )
-      console.log(res.data);
-      alert(res.data.message);
+      
+      toast.success(res.data.message);
       navigate(`/myissues`);
     } catch(err){
-      console.log(err.response.data);
+      toast.error(err.response.data.message);
     }
   }
 
   return (
     <div
-  style={{
-    maxWidth: "800px",
-    margin: "40px auto",
-    background: "white",
-    padding: "30px",
-    borderRadius: "15px",
-    boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
+      style={{
+        maxWidth: "800px",
+        margin: "40px auto",
+        background: "white",
+        padding: "30px",
+        borderRadius: "15px",
+        boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
+      }}
+    >
 
-  }}
-  >
-      {/* <h1 style={{margin:"1rem 0"}}>Complaint Details</h1> */}
-
-
-      <h2 style={{margin: "1rem 0"}}>{complaint.title}</h2>
-      <br />
-
-      {complaint.image.url && (
+    <h2 style={{marginBottom:"1.5rem", marginTop:"1rem"}}>{complaint.title}</h2>
+      
+    {complaint.image && complaint.image.url && (
       <img style={{
         marginBottom: "1rem",
         borderRadius:"1rem"
       }}
         src={complaint.image.url}
         alt="Issue"
-        width="80%"
-        height="180vh"
-  />
-  
-)}
-      <p>
-        <b>Category:</b> {complaint.category}
+        width="90%"
+        height="260px"
+      />
+      )}
+
+      <p style={{marginBottom: "1rem"}}>
+        <b>Hosted By:</b>&nbsp; {complaint.createdBy.username}
       </p>
-      <br />
-      <p>
-        <strong>Description:</strong> {complaint.description}
+
+      <p style={{marginBottom: "1rem"}}>
+        <b>Category:</b>&nbsp; {complaint.category}
       </p>
-      <br />
-      <p>
-        <strong>Status:</strong>
+      
+      <p style={{marginBottom: "1rem"}}>
+        <strong>Description:</strong>&nbsp; {complaint.description}
+      </p>
+     
+      <p style={{marginBottom: "1rem"}}>
+        <strong>Status:</strong>&nbsp;
         <span
           style={{
             color:
@@ -109,21 +112,23 @@ function ComplaintDetails() {
           {complaint.status}
         </span>
       </p>
-      <br />
-      <p>
-        <strong>Location:</strong> {complaint.location}
+      
+      <p style={{marginBottom: "1rem"}}>
+        <strong>Location:</strong>&nbsp; {complaint.location}
       </p>
-      <br />
-      <p>
-          <strong>Created At:</strong>{" "}
+      
+      <p style={{marginBottom: "1.5rem"}}>
+          <strong>Created At:</strong>&nbsp;{" "}
           {new Date(complaint.createdAt).toLocaleString()}
       </p>
-          <br />
-      <br />
-    <Link to={`/issues/${id}/edit`}>
-      <button style={{
+          
+      {token && user.role !== "admin" && (
+      <>
+        <Link to={`/issues/${id}/edit`}>
+          <button 
+            style={{
                 padding: "6px 12px",
-                width: "10%",
+                width: "30%",
                 borderRadius: "10px",
                 border: "none",
                 cursor: "pointer",
@@ -133,27 +138,53 @@ function ComplaintDetails() {
                 color: "white",
                 fontWeight: "bold",
                 marginBottom:"1rem",
-              }}>
-        Edit
-      </button>
+            }}>
+            Edit
+          </button>
       </Link>
+
       <button 
-          onClick={()=> deleteComplaint(complaint._id)}
-          style={{
-                padding: "6px 12px",
-                width: "10%",
-                borderRadius: "10px",
-                border: "none",
-                cursor: "pointer",
-                fontSize: "1rem",
-                marginRight: "10px",
-                background: "#2563eb",
-                color: "white",
-                fontWeight: "bold",
-                marginBottom:"1rem",
-              }}>
-        Delete
+        onClick={()=> deleteComplaint(complaint._id)}
+        style={{
+            padding: "6px 12px",
+            width: "30%",
+            borderRadius: "10px",
+            border: "none",
+            cursor: "pointer",
+            fontSize: "1rem",
+            marginRight: "10px",
+            background: "#2563eb",
+            color: "white",
+            fontWeight: "bold",
+            marginBottom:"1rem",
+          }}>
+          Delete
       </button>
+      </>
+      )}
+
+      {token && user.role == "admin" && (
+      <Link to={`/manage-issues`}>
+        <button
+          style={{
+            padding: "6px 12px",
+            width: "30%",
+            borderRadius: "10px",
+            border: "none",
+            cursor: "pointer",
+            fontSize: "1rem",
+            marginRight: "10px",
+            background: "#2563eb",
+            color: "white",
+            fontWeight: "bold",
+            marginBottom:"1rem",
+          }}
+        >
+          <i className="fa-solid fa-arrow-left" style={{color:"white", marginRight:"0.5rem"}}></i>
+          Back
+        </button>
+      </Link>
+      )}
     </div>
   );
 }

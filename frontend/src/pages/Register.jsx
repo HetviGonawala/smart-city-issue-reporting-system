@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
+import { AuthContext } from "../context/AuthContext";
+import { toast } from "react-toastify";
 
 function Register() {
 
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext); 
 
   const validate = values => {
    const errors = {};
@@ -16,9 +19,9 @@ function Register() {
 
    if (!values.email) {
      errors.email = 'Please Enter Valid Email';
-  //  } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
-  //    errors.email = 'Invalid email address';
-  //  }
+   } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
+     errors.email = 'Invalid email address';
+   }
  
    if (!values.password) {
      errors.password = 'Please Enter Password';
@@ -26,7 +29,7 @@ function Register() {
    
    return errors;
  };
-  }
+  
 
  const formik = useFormik({
      initialValues: {
@@ -36,22 +39,23 @@ function Register() {
      },
      validate,
      onSubmit: async(values) => {
-       try{
-      const res = await axios.post("http://localhost:5000/api/auth/register", {
-        username: values.username,
-        email : values.email,
-        password: values.password,
-      })
-    } catch(err){
-      console.log(err.response.data || err.message);
-    }
-    
-    navigate("/login");
-
-     },
-   });
+      try{
+        const res = await axios.post("http://localhost:5000/api/auth/register", 
+          {
+            username: values.username,
+            email : values.email,
+            password: values.password,
+          }
+        )
+        login(res.data.token);
+        toast.success("User Logged In Successfully");
+        navigate("/");
+      } catch(err){
+      toast.error(err.response.data.message);
+      }
+    },
+  });
   
-
   return (
     <div
       style={{
@@ -94,6 +98,7 @@ function Register() {
             border: "1px solid #ccc",
           }}
         />
+
         {formik.touched.username && formik.errors.username ? (
         <p style={{ color: "red" }}>{formik.errors.username}</p>
         ) : null}
@@ -111,6 +116,7 @@ function Register() {
             border: "1px solid #ccc",
           }}
         />
+        
         {formik.touched.email && formik.errors.email ? (
         <p style={{ color: "red" }}>{formik.errors.email}</p>
         ) : null}

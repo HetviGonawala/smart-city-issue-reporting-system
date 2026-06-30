@@ -8,6 +8,7 @@ const issueSchema = new Schema({
     },
     description:{
         type: String,
+        required: true,
     },
     image:{
         filename: String,
@@ -16,11 +17,12 @@ const issueSchema = new Schema({
     category: {
         type: String,
         enum:[
-            "Pothole",
-            "Garbage",
-            "Water Leakage",
-            "Street Light",
             "Road Damage",
+            "Street Light",
+            "Garbage Collection",
+            "Water Supply",
+            "Traffic Signals",
+            "Parks & Public Spaces",
         ],
         required: true,
     },
