@@ -14,8 +14,9 @@ const LocalStrategy = require("passport-local").Strategy;
 const User = require("./models/user");
 
 app.use(cors({
-    origin: "http://localhost:5173"
-}))
+  origin: "*",
+  credentials: true
+}));
 
 const adminRouter = require("./routes/adminRoutes.js");
 const authRouter = require("./routes/authRoutes.js");
