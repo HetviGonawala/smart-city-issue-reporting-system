@@ -14,7 +14,7 @@ const LocalStrategy = require("passport-local").Strategy;
 const User = require("./models/user");
 
 app.use(cors({
-  origin: "*",
+  origin: "https://smart-city-issue-reporting-system-alpha.vercel.app",
   credentials: true
 }));
 
