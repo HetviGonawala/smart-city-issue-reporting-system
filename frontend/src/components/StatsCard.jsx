@@ -9,11 +9,13 @@ function StatsCard({ title, value }) {
         width: "200px",
         textAlign: "center",
         boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+        display: "flex",
+        flexDirection:"column",
       }}
     >
       <h3>{title}</h3>
 
-      <h1 style={{color: "#1976d2"}}>
+      <h1 style={{color: "#1976d2", marginTop:"auto"}}>
         {value}
       </h1>
     </div>

@@ -207,7 +207,7 @@ function Home() {
               {card.title}
             </h2>
 
-            <p style={{lineHeight: "1.6"}}><i>{card.value}</i></p>
+            <p style={{lineHeight: "1.6"}}>{card.value}</p>
           </div>
         ))}
       </div>
