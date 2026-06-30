@@ -1,8 +1,8 @@
 import React,{useState, useContext} from "react";
-import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import api from "../api/axios"
 
 function ComplaintTable({ complaints, setComplaints }) {
 
@@ -11,7 +11,7 @@ function ComplaintTable({ complaints, setComplaints }) {
 
   const updateComplaint = async(id)=>{
     try{
-        const res = await axios.put(`http://localhost:5000/api/admin/complaints/${id}/status`,{
+        const res = await api.put(`/api/admin/complaints/${id}/status`,{
          status: status[id],
     },
     {
@@ -39,7 +39,7 @@ function ComplaintTable({ complaints, setComplaints }) {
   if (!confirmDelete) return;
 
       try{
-        const res = await axios.delete(`http://localhost:5000/api/admin/complaint/${id}`,
+        const res = await api.delete(`/api/admin/complaint/${id}`,
           {
             headers:{
               Authorization: `Bearer ${token}`,

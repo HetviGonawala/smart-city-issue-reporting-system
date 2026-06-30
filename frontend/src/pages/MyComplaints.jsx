@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useContext } from "react";
-import axios from "axios";
 import ComplaintCard from "../components/ComplaintCard";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
+import api from "../api/axios";
 
 function MyComplaints() {
   const [issues, setIssues] = useState([]);
@@ -11,7 +11,7 @@ function MyComplaints() {
   
   const fetchIssues = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/users/mycomplaints",
+      const res = await api.get("/api/users/mycomplaints",
         {
           headers: {
             Authorization: `Bearer ${token}`,

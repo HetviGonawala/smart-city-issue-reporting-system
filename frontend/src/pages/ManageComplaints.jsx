@@ -1,8 +1,8 @@
 import React, {useState, useEffect, useContext} from "react";
-import axios from "axios";
 import { AuthContext } from "../context/AuthContext";
 import ComplaintTable from "../components/ComplaintTable";
 import { toast } from "react-toastify";
+import api from "../api/axios";
 
 function ManageComplaints() {
 
@@ -11,7 +11,7 @@ function ManageComplaints() {
   
   const fetchComplaints = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/admin/complaints",
+      const res = await api.get("/api/admin/complaints",
       {
         headers: {
           Authorization: `Bearer ${token}`,

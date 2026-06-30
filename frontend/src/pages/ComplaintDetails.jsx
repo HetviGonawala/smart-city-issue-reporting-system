@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useContext} from "react";
-import axios from "axios";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext"
 import { toast } from "react-toastify";
+import api from "../api/axios";
 
 function ComplaintDetails() {
   const { id } = useParams();
@@ -13,7 +13,7 @@ function ComplaintDetails() {
 
   const fetchComplaint = async()=>{
     try{
-      const res = await axios.get(`http://localhost:5000/api/issues/${id}`,
+      const res = await api.get(`/api/issues/${id}`,
         {
           headers: {
             Authorization : `Bearer ${token}`,
@@ -42,7 +42,7 @@ function ComplaintDetails() {
     if(!confirmDelete) return;
     
     try{
-      const res = await axios.delete(`http://localhost:5000/api/issues/${id}`,
+      const res = await api.delete(`/api/issues/${id}`,
         {
           headers: {
             Authorization : `Bearer ${token}`,

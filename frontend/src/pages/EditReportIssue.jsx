@@ -1,10 +1,10 @@
 import react, { useState, useEffect, useContext} from "react";
-import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useFormik } from 'formik';
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext"
 import { toast } from "react-toastify";
+import api from "../api/axios";
 
 
 function EditReportIssue() {
@@ -59,7 +59,7 @@ function EditReportIssue() {
       }
 
       try{
-        const res = await axios.put(`http://localhost:5000/api/issues/${id}`,
+        const res = await api.put(`/api/issues/${id}`,
         formData,
         {
           headers:{
@@ -79,7 +79,7 @@ function EditReportIssue() {
 
   const fetchComplaint = async()=>{
     try{
-      const res = await axios.get(`http://localhost:5000/api/issues/${id}`,
+      const res = await api.get(`/api/issues/${id}`,
         {
           headers: {
             Authorization : `Bearer ${token}`,

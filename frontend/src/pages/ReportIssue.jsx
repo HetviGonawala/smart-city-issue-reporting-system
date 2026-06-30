@@ -1,9 +1,9 @@
 import React, { useState, useContext } from "react";
-import axios from "axios";
 import { useFormik } from 'formik';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
+import api from "../api/axios";
 
 function ReportIssue() {
 
@@ -55,7 +55,7 @@ function ReportIssue() {
       }
 
       try{
-        const res = await axios.post("http://localhost:5000/api/issues",
+        const res = await api.post("/api/issues",
         formData,
         {
           headers:{

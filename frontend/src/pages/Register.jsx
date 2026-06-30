@@ -1,9 +1,9 @@
 import React, { useState, useContext } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { AuthContext } from "../context/AuthContext";
 import { toast } from "react-toastify";
+import api from "../api/axios";
 
 function Register() {
 
@@ -40,7 +40,7 @@ function Register() {
      validate,
      onSubmit: async(values) => {
       try{
-        const res = await axios.post("http://localhost:5000/api/auth/register", 
+        const res = await api.post("/api/auth/register", 
           {
             username: values.username,
             email : values.email,

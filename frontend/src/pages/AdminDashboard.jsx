@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext} from "react";
-import axios from "axios";
 import StatsCard from "../components/StatsCard";
 import { AuthContext } from "../context/AuthContext";
+import api from "../api/axios";
 
 function AdminDashboard() {
 
@@ -11,7 +11,7 @@ function AdminDashboard() {
   const fetchRecords = async()=>{
 
       try{
-        const res = await axios.get("http://localhost:5000/api/admin/dashboard",
+        const res = await api.get("/api/admin/dashboard",
           {
             headers:{
               Authorization: `Bearer ${token}`,
